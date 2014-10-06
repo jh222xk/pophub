@@ -1,0 +1,14 @@
+### OSX ###
+.DS_Store
+.AppleDouble
+.LSOverride
+
+### Sublime ###
+*.sublime-workspace
+
+
+data.json
+data.txt
+
+vendor/
+composer.lock
