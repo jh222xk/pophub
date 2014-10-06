@@ -103,8 +103,6 @@ class Response {
       }
     }
 
-    var_dump($headersArr);
-
     return $headersArr;
   }
 }

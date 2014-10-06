@@ -8,7 +8,7 @@ return array(
 
   'GITHUB_CLIENT_ID' => getenv("POPHUB_GITHUB_CLIENT_ID"),
 
-  'GITHUB_CLIENT_SECRET' => getenv("POPHUB_GITHUB_CLIENT_ID"),
+  'GITHUB_CLIENT_SECRET' => getenv("POPHUB_GITHUB_CLIENT_SECRET"),
 
   'GITHUB_CALLBACK_URL' => "http://localhost:9999/github-callback"
 );
