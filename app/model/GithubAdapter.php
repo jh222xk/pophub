@@ -2,7 +2,6 @@
 
 namespace PopHub\Model;
 
-use Kagu\Cache;
 use Kagu\Config\Config;
 
 class GithubAdapter implements ServiceInterface {
@@ -16,7 +15,6 @@ class GithubAdapter implements ServiceInterface {
   public function __construct(Github $github) {
     $config = new Config(__DIR__."/../config/app.php");
     $this->github = $github;
-    $this->memcached = new Cache\MemcachedAdapter(new Cache\Memcached($config));
   }
 
   /**
@@ -156,29 +154,21 @@ class GithubAdapter implements ServiceInterface {
    * @return Array $events
    */
   public function getUserActivity($user) {
-    $cacheKey = "events_{$user}";
+    $data = $this->github->getUserActivity($user);
 
-    // Check caching, we will make a new request if the cache is empty.
-    if (false === ($events = $this->memcached->get($cacheKey))) {
-      $data = $this->github->getUserActivity($user);
+    foreach ($data as $eventData) {
+      $login = $eventData->actor->login;
+      $avatar = $eventData->actor->avatar_url;
 
-      foreach ($data as $eventData) {
-        $login = $eventData->actor->login;
-        $avatar = $eventData->actor->avatar_url;
+      $repoName = $eventData->repo->name;
 
-        $repoName = $eventData->repo->name;
+      $type = $eventData->type;
+      $payload = $eventData->payload;
+      $createdAt = $eventData->created_at;
 
-        $type = $eventData->type;
-        $payload = $eventData->payload;
-        $createdAt = $eventData->created_at;
+      $user = new User($login, null, null, null, null, $avatar);
 
-        $user = new User($login, null, null, null, null, $avatar);
-
-        $events[] = new Activity($user, new Repo($repoName, $user), $type, $payload, $createdAt);
-      }
-
-      // Save the events to Memcached.
-      $this->memcached->set($cacheKey, $events);
+      $events[] = new Activity($user, new Repo($repoName, $user), $type, $payload, $createdAt);
     }
 
     return $events;

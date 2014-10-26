@@ -8,7 +8,6 @@ require __DIR__.'/../../bootstrap/start.php';
 
 use Kagu\Config;
 use Kagu\Exception\MissingCredentialsException;
-use Kagu\Cache;
 
 use PopHub\Model;
 
@@ -153,10 +152,6 @@ class GithubTest extends \PHPUnit_Framework_TestCase {
     $expectedArray = array("login" => "jh222xk");
 
     $events = $this->github->getUserActivity($user);
-
-    // Flush the cache
-    $memcached = new Cache\MemcachedAdapter(new Cache\Memcached($this->config));
-    $memcached->flush();
 
     $this->assertEquals($expectedArray["login"], $events[0]->getUser()->getLogin());
   }
